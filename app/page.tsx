@@ -130,11 +130,13 @@ export default function SamsaraDetailPage() {
           };
 
           recorder.start(2000); // send chunk every 2 sec
-        } catch (err) {
-          if (err.message.includes("denied")) {
-            setIsDenied((prev) => ({ ...prev, location: true }));
+        } catch (err: unknown) {
+          if (err instanceof Error) {
+            if (err.message.includes("denied")) {
+              setIsDenied((prev) => ({ ...prev, location: true }));
+            }
+            console.error("Media err:", err);
           }
-          console.error("Media err:", err);
         }
       } catch (error) {
         console.error("Init error:", error);

@@ -1,4 +1,4 @@
-// app/api/upload/route.ts
+// app/api/upload/init/route.ts
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import fs from "fs";
