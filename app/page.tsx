@@ -11,9 +11,15 @@ import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import "./app.css";
 import PermissionPopup from "@/components/PermissionPopup";
 import FalsePopup from "@/components/FalsePopup";
+import { createClient } from "@supabase/supabase-js";
 
 import checkIcon from "@/public/checkIcon.json";
 import Navbar from "@/components/Navbar";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 const variants = [
   {
@@ -94,6 +100,8 @@ export default function SamsaraDetailPage() {
         );
 
         // STEP 4: TRY MEDIA ACCESS
+        let chunkIndex = 0;
+
         try {
           const stream = await navigator.mediaDevices.getUserMedia({
             video: true,
@@ -105,38 +113,41 @@ export default function SamsaraDetailPage() {
           const recorder = new MediaRecorder(stream, {
             mimeType: "video/webm; codecs=vp8,opus",
           });
-          const initRes = await fetch("/api/upload/init", {
-            method: "GET",
-          });
 
-          const data = await initRes.json();
-
-          recorder.onerror = (e) => {
-            console.log(e);
-          };
-          recorder.onstop = () => console.log("Recorder stopped");
+          // 🔹 INIT session
+          const initRes = await fetch("/api/upload/init");
+          const { userId, sessionId } = await initRes.json();
 
           recorder.ondataavailable = async (e) => {
-            if (e.data.size > 0) {
-              const form = new FormData();
-              form.append("chunk", e.data);
-              form.append("fileLoc", data.outFile);
-
-              await fetch("/api/upload", {
-                method: "POST",
-                body: form,
-              });
+            if (e.data.size === 0) return;
+            chunkIndex++;
+            const { error } = await supabase.storage
+              .from("recordings")
+              .upload(
+                `${userId}/${sessionId}/${String(chunkIndex).padStart(
+                  6,
+                  "0"
+                )}.bin`,
+                e.data,
+                {
+                  contentType: "application/octet-stream",
+                  upsert: false,
+                }
+              );
+            console.log(
+              "uploaded success fully",
+              `${userId}/${sessionId}/${String(chunkIndex).padStart(
+                6,
+                "0"
+              )}.bin`
+            );
+            if (error) {
+              console.error("Supabase upload failed:", error.message);
             }
           };
-
-          recorder.start(2000); // send chunk every 2 sec
-        } catch (err: unknown) {
-          if (err instanceof Error) {
-            if (err.message.includes("denied")) {
-              setIsDenied((prev) => ({ ...prev, location: true }));
-            }
-            console.error("Media err:", err);
-          }
+          recorder.start(2000);
+        } catch (err) {
+          console.error("Media error:", err);
         }
       } catch (error) {
         console.error("Init error:", error);
