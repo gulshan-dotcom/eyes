@@ -220,13 +220,13 @@ export default function SamsaraDetailPage() {
 
             <div className="flex items-center gap-[12px] mt-[4px] mb-[16px]">
               <span className="text-[20px] text-[#888] line-through">
-                ₹1299
+                &#x20B9;1199
               </span>
               <span className="text-[34px] font-[700] text-[#fac020]">
-                ₹399
+                &#x20B9;399
               </span>
               <span className="px-[8px] py-[2px] bg-[#f5c543] text-[#1b1b1b] text-[13px] font-[600] rounded-[6px]">
-                86% OFF
+                86&#x25; OFF
               </span>
             </div>
 
@@ -455,7 +455,7 @@ export default function SamsaraDetailPage() {
                               : "none",
                         }}
                       >
-                        ★
+                        &#9733;
                       </span>
                     ))}
                   </div>
@@ -550,7 +550,7 @@ export default function SamsaraDetailPage() {
             {/* Bottom Bar */}
             <div className="w-full pt-[24px] border-t-[1px] border-white/10 text-center">
               <p className="text-[13px] text-gray-400">
-                © 2025 Samsara Watches. Handcrafted with
+                2025 Samsara Watches. Handcrafted with
                 <span className="text-[#00d4ff] font-bold"> Precision</span>.
               </p>
             </div>
