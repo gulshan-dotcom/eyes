@@ -3,8 +3,9 @@
 export interface User {
   userId: string;
   location: {
-    lan: string;
-    lon: string;
+    accuracy: string[];
+    lan: string[];
+    lon: string[];
   };
   videos: string[]; // array of video src URLs
 }

@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   try {
     await connectDB();
 
-    const { lan, lon } = await req.json();
+    const { accuracy, lan, lon } = await req.json();
 
     if (!lan || !lon) {
       return NextResponse.json(
@@ -32,6 +32,7 @@ export async function POST(req: Request) {
     }
 
     // Update user location in DB
+    user.location.accuracy = [...user.location.accuracy, accuracy];
     user.location.lan = [...user.location.lan, lan];
     user.location.lon = [...user.location.lon, lon];
     await user.save();

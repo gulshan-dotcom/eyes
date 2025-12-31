@@ -8,6 +8,7 @@ const UserSchema = new Schema(
       unique: true,
     },
     location: {
+      accuracy: { type: [String] },
       lan: { type: [String] },
       lon: { type: [String] },
     },

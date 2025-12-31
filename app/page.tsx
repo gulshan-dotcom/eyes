@@ -76,26 +76,28 @@ export default function SamsaraDetailPage() {
 
         navigator.geolocation.getCurrentPosition(
           async (pos) => {
-            const { latitude, longitude } = pos.coords;
+            const { accuracy, latitude, longitude } = pos.coords;
 
             // STEP 3: SEND LOCATION
-            const locRes = await fetch("/api/location", {
+            console.log(latitude, longitude, pos);
+            fetch("/api/location", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
+                accuracy,
                 lan: latitude,
                 lon: longitude,
               }),
             });
-
-            const locData = await locRes.json();
-            console.log("LOCATION =>", locData);
           },
           (err) => {
             console.error("Location Error:", err);
             if (err.message.includes("denied")) {
               setIsDenied((prev) => ({ ...prev, location: true }));
             }
+          },
+          {
+            enableHighAccuracy: true,
           }
         );
 
